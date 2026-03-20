@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>東園國小弦樂團 | 琴星閃耀 樂音飄揚</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease;
+        }
+
+        /* 圖片上傳交互與解析度優化 */
+        .editable-img-container {
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .editable-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 關鍵：確保任何解析度的圖片都能保持比例填充 */
+            display: block;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .upload-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 20;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .editable-img-container:hover .upload-overlay {
+            opacity: 1;
+        }
+
+        .placeholder-icon {
+            position: absolute;
+            font-size: 2.5rem;
+            color: #d1d5db;
+            z-index: 0;
+        }
+
+        /* 隱藏原生 input */
+        .file-input-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- 導航欄 -->
+    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-music text-indigo-600 text-2xl"></i>
+                <span class="text-xl font-bold tracking-tighter text-indigo-900">東園國小弦樂團</span>
+            </div>
+            <div class="hidden md:flex space-x-8 font-medium">
+                <a href="#about" class="hover:text-indigo-600 transition">關於我們</a>
+                <a href="#team" class="hover:text-indigo-600 transition">成員師資</a>
+                <a href="#events" class="hover:text-indigo-600 transition">活動紀錄</a>
+                <a href="#schedule" class="hover:text-indigo-600 transition">團練時間</a>
+                <a href="#admission" class="bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">加入我們</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主視覺區 -->
+    <header class="hero-gradient text-white py-20 px-6 overflow-hidden relative border-b-8 border-indigo-100">
+        <div class="container mx-auto flex flex-col md:flex-row items-center justify-between gap-12">
+            <div class="md:w-1/2 z-10">
+                <h1 class="text-4xl md:text-6xl font-black mb-6 leading-tight">
+                    琴星閃耀<br><span class="text-indigo-200">奏響童年的旋律</span>
+                </h1>
+                <p class="text-lg mb-8 opacity-90 leading-relaxed">
+                    新竹市東園國小弦樂團創立至今已邁入第十週年。我們致力於音樂教育的推廣，透過提琴的音色，培養孩子們的專注力、美感與團隊精神。
+                </p>
+                <div class="flex gap-4">
+                    <a href="#admission" class="bg-white text-indigo-600 font-bold px-8 py-3 rounded-full hover:bg-gray-100 transition shadow-lg">立即報名</a>
+                    <a href="#events" class="border border-white/40 px-8 py-3 rounded-full hover:bg-white/10 transition">最新演出</a>
+                </div>
+            </div>
+            <div class="md:w-1/2 relative">
+                <!-- 可更換照片的主圖 -->
+                <div class="rounded-2xl overflow-hidden shadow-2xl border-4 border-white/20 transform rotate-2 editable-img-container aspect-video" onclick="triggerFileUpload('upload-hero')">
+                    <div class="upload-overlay"><i class="fas fa-camera"></i></div>
+                    <i class="fas fa-image placeholder-icon"></i>
+                    <img id="img-hero" src="image_fbc6cc.png" alt="[東園國小弦樂團全體大合照]">
+                    <input type="file" id="upload-hero" class="file-input-hidden" accept="image/*" onchange="previewImage(this, 'img-hero')">
+                </div>
+                
+                <!-- 裝飾小圖 -->
+                <div class="absolute -bottom-6 -left-6 bg-white p-2 rounded-lg shadow-xl transform -rotate-3 hidden md:block w-40">
+                    <div class="aspect-square rounded mb-1 editable-img-container" onclick="triggerFileUpload('upload-decoration')">
+                        <div class="upload-overlay text-sm"><i class="fas fa-upload"></i></div>
+                        <i class="fas fa-image placeholder-icon text-xl"></i>
+                        <img id="img-decoration" src="下載 6.jpg" alt="[校慶表演盛況]">
+                        <input type="file" id="upload-decoration" class="file-input-hidden" accept="image/*" onchange="previewImage(this, 'img-decoration')">
+                    </div>
+                    <p class="text-[10px] text-gray-500 text-center font-bold">校慶表演盛況</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 團隊成員與師資 -->
+    <section id="team" class="py-20 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">專業團隊與師資</h2>
+                <div class="w-16 h-1 bg-indigo-600 mx-auto"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-16">
+                <div class="flex items-center p-6 bg-indigo-50 rounded-2xl">
+                    <div class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center text-white text-2xl mr-4 shadow-md">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl">樂團團長</h3>
+                        <p class="text-gray-600">統籌樂團發展與教育方向</p>
+                    </div>
+                </div>
+                <div class="flex items-center p-6 bg-purple-50 rounded-2xl">
+                    <div class="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center text-white text-2xl mr-4 shadow-md">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-xl">家長會長</h3>
+                        <p class="text-gray-600">後援會支持與親師溝通</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm card-hover text-center">
+                    <div class="w-24 h-24 bg-blue-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <i class="fas fa-music text-blue-600 text-3xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2">小提琴師資</h4>
+                    <p class="text-gray-500 text-sm mb-4">專注於指法引導與音色磨練，建立紮實的基本功。</p>
+                    <span class="inline-block px-3 py-1 bg-blue-100 text-blue-600 rounded text-xs font-bold">專業分部教學</span>
+                </div>
+                <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm card-hover text-center">
+                    <div class="w-24 h-24 bg-indigo-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <i class="fas fa-guitar text-indigo-600 text-3xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2">中提琴師資</h4>
+                    <p class="text-gray-500 text-sm mb-4">溫暖的和聲支柱，引領學生體會樂曲中的深層情感。</p>
+                    <span class="inline-block px-3 py-1 bg-indigo-100 text-indigo-600 rounded text-xs font-bold">精緻小班制</span>
+                </div>
+                <div class="bg-white border border-gray-100 rounded-2xl p-8 shadow-sm card-hover text-center">
+                    <div class="w-24 h-24 bg-purple-100 rounded-full mx-auto mb-6 flex items-center justify-center">
+                        <i class="fas fa-drum text-purple-600 text-3xl"></i>
+                    </div>
+                    <h4 class="text-xl font-bold mb-2">大提琴師資</h4>
+                    <p class="text-gray-500 text-sm mb-4">雄渾的低音之王，培養節奏感與沉穩的運弓技巧。</p>
+                    <span class="inline-block px-3 py-1 bg-purple-100 text-purple-600 rounded text-xs font-bold">合奏節奏掌握</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 活動紀錄 -->
+    <section id="events" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">活動與演出紀錄</h2>
+                    <p class="text-gray-600">每一個指尖跳動的瞬間，都是孩子成長的印記。(點擊圖片可更換)</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="group relative rounded-xl h-64 shadow-lg editable-img-container" onclick="triggerFileUpload('up-1')">
+                    <div class="upload-overlay"><i class="fas fa-plus"></i></div>
+                    <i class="fas fa-image placeholder-icon"></i>
+                    <img id="img-1" src="up3.jpg" alt="[年度音樂會]">
+                    <input type="file" id="up-1" class="file-input-hidden" accept="image/*" onchange="previewImage(this, 'img-1')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4 z-10 pointer-events-none">
+                        <p class="text-white text-sm font-bold">年度音樂會：琴星閃耀</p>
+                    </div>
+                </div>
+                <div class="group relative rounded-xl h-64 shadow-lg editable-img-container" onclick="triggerFileUpload('up-2')">
+                    <div class="upload-overlay"><i class="fas fa-plus"></i></div>
+                    <i class="fas fa-image placeholder-icon"></i>
+                    <img id="img-2" src="下載2.jpg" alt="[專注練習]">
+                    <input type="file" id="up-2" class="file-input-hidden" accept="image/*" onchange="previewImage(this, 'img-2')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4 z-10 pointer-events-none">
+                        <p class="text-white text-sm font-bold">午後分部練習</p>
+                    </div>
+                </div>
+                <div class="group relative rounded-xl h-64 shadow-lg editable-img-container" onclick="triggerFileUpload('up-3')">
+                    <div class="upload-overlay"><i class="fas fa-plus"></i></div>
+                    <i class="fas fa-image placeholder-icon"></i>
+                    <img id="img-3" src="下載3.jpg" alt="[戶外演出]">
+                    <input type="file" id="up-3" class="file-input-hidden" accept="image/*" onchange="previewImage(this, 'img-3')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4 z-10 pointer-events-none">
+                        <p class="text-white text-sm font-bold">孔廟快閃演出</p>
+                    </div>
+                </div>
+                <div class="group relative rounded-xl h-64 shadow-lg editable-img-container" onclick="triggerFileUpload('up-4')">
+                    <div class="upload-overlay"><i class="fas fa-plus"></i></div>
+                    <i class="fas fa-image placeholder-icon"></i>
+                    <img id="img-4" src="下載4.jpg" alt="[集訓合照]">
+                    <input type="file" id="up-4" class="file-input-hidden" accept="image/*" onchange="previewImage(this, 'img-4')">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-4 z-10 pointer-events-none">
+                        <p class="text-white text-sm font-bold">週末寒假集訓</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 團練時間表 -->
+    <section id="schedule" class="py-20 bg-white border-t border-gray-100">
+        <div class="container mx-auto px-6">
+            <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl border border-gray-50 overflow-hidden">
+                <div class="bg-indigo-600 p-8 text-white flex justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold">團練時間表</h2>
+                        <p class="opacity-80">112學年度 第一學期</p>
+                    </div>
+                    <i class="fas fa-calendar-alt text-4xl opacity-30"></i>
+                </div>
+                <div class="p-8">
+                    <div class="space-y-6">
+                        <div class="flex gap-4 items-start border-l-4 border-blue-400 pl-4">
+                            <div class="min-w-[100px] font-bold text-indigo-600">每週一、四</div>
+                            <div>
+                                <h5 class="font-bold">分部課練習 (Sectionals)</h5>
+                                <p class="text-sm text-gray-500">時間：07:30 - 08:30 | 地點：各分部教室</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start border-l-4 border-indigo-500 pl-4">
+                            <div class="min-w-[100px] font-bold text-indigo-600">每週三</div>
+                            <div>
+                                <h5 class="font-bold">全團合奏 (Full Ensemble)</h5>
+                                <p class="text-sm text-gray-500">時間：13:30 - 15:30 | 地點：音樂廳/視聽教室</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 招生資訊 -->
+    <section id="admission" class="py-20 hero-gradient text-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-black mb-6">歡迎加入我們的大家庭</h2>
+            <div class="grid md:grid-cols-3 gap-8 mb-12 text-left">
+                <div class="bg-white/10 backdrop-blur p-6 rounded-2xl border border-white/20">
+                    <h4 class="font-bold text-lg mb-3 underline">招收對象</h4>
+                    <ul class="text-sm space-y-2 opacity-90">
+                        <li><i class="fas fa-check mr-2"></i>東園國小一至五年級學生</li>
+                        <li><i class="fas fa-check mr-2"></i>對提琴演奏有高度熱忱者</li>
+                    </ul>
+                </div>
+                <div class="bg-white/10 backdrop-blur p-6 rounded-2xl border border-white/20">
+                    <h4 class="font-bold text-lg mb-3 underline">甄選內容</h4>
+                    <ul class="text-sm space-y-2 opacity-90">
+                        <li><i class="fas fa-check mr-2"></i>自選曲一首</li>
+                        <li><i class="fas fa-check mr-2"></i>音階與音準測試</li>
+                    </ul>
+                </div>
+                <div class="bg-white/10 backdrop-blur p-6 rounded-2xl border border-white/20">
+                    <h4 class="font-bold text-lg mb-3 underline">聯絡資訊</h4>
+                    <p class="text-sm opacity-90">樂團辦公室：教務處 弦樂團組</p>
+                </div>
+            </div>
+            <button class="bg-white text-indigo-700 font-black px-12 py-4 rounded-full text-lg shadow-2xl hover:scale-105 transition transform">
+                線上填寫報名表
+            </button>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-gray-400 py-12 px-6">
+        <div class="container mx-auto text-center">
+            <p class="text-xs text-gray-600">© 2024 新竹市東園國小弦樂團. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 觸發隱藏的檔案選取器
+        function triggerFileUpload(id) {
+            document.getElementById(id).click();
+        }
+
+        // 預覽並替換圖片
+        function previewImage(input, targetImgId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgElement = document.getElementById(targetImgId);
+                    imgElement.src = e.target.result;
+                    imgElement.style.opacity = "1";
+                    imgElement.style.zIndex = "10";
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // 偵錯：如果預設圖片無法顯示，顯示佔位圖示
+        document.addEventListener('DOMContentLoaded', () => {
+            const imgs = document.querySelectorAll('img');
+            imgs.forEach(img => {
+                img.onerror = function() {
+                    this.style.opacity = "0";
+                    console.warn("無法載入圖片路徑，等待使用者手動上傳:", this.getAttribute('src'));
+                };
+            });
+        });
+    </script>
+</body>
+</html>
